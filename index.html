@@ -8,16 +8,16 @@
   body {
     font-family: sans-serif;
     padding: 20px;
-    font-size: 16px;
+    font-size: 16px; /* 모바일 최적화: 기본 글꼴 크기 설정 */
   }
 
   h1 {
     text-align: center;
-    font-size: 1.8em;
+    font-size: 1.8em; /* 모바일 최적화: H1 크기 조정 */
   }
 
   p { /* 이 p 태그는 h1 아래의 설명 텍스트입니다. */
-    text-align: center;
+    text-align: center; /* 이미 가운데 정렬되어 있음 */
     font-size: 0.9em;
   }
 
@@ -95,16 +95,16 @@
 
   /* --- 설명서 모달 관련 CSS --- */
   .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
+    display: none; /* 기본적으로 숨김 */
+    position: fixed; /* 고정 위치 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.7);
-    padding-top: 60px;
+    width: 100%; /* 전체 너비 */
+    height: 100%; /* 전체 높이 */
+    overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+    background-color: rgba(0,0,0,0.7); /* 반투명 검정 배경 */
+    padding-top: 60px; /* 상단 여백 */
   }
 
   .modal-content {
@@ -141,10 +141,11 @@
     font-family: sans-serif;
     padding: 0px;
     line-height: 1.6;
+    text-align: left; /* !추가: .guide-body 내부의 텍스트를 모두 왼쪽 정렬합니다. */
   }
 
   .guide-body h1 {
-    text-align: center;
+    text-align: center; /* 모달 내 최상위 제목은 가운데 정렬 유지 */
     color: #333;
     font-size: 2em;
   }
@@ -155,14 +156,17 @@
     padding-bottom: 5px;
     margin-top: 20px;
     font-size: 1.5em;
+    /* h2도 이제 .guide-body에 의해 왼쪽 정렬됩니다. */
   }
 
+  /* 모달 내 p 태그에 대한 정렬을 명시적으로 left로 지정 */
   .guide-body p {
     margin-bottom: 10px;
+    text-align: left; /* !추가: 모달 내 p 태그도 왼쪽 정렬합니다. */
   }
 
   .guide-image-container {
-    text-align: center;
+    text-align: center; /* 이미지 컨테이너는 여전히 가운데 정렬 유지 */
     margin: 20px 0;
   }
 
@@ -180,15 +184,18 @@
     padding: 10px 15px;
     margin-top: 20px;
     color: #555;
+    /* .guide-body에 의해 텍스트 정렬이 왼쪽으로 됩니다. */
   }
 
   .guide-body ul {
     list-style-type: disc;
     margin-left: 20px;
+    /* .guide-body에 의해 텍스트 정렬이 왼쪽으로 됩니다. */
   }
 
   .guide-body li {
     margin-bottom: 5px;
+    /* .guide-body에 의해 텍스트 정렬이 왼쪽으로 됩니다. */
   }
 
   .guide-highlight {
@@ -294,12 +301,12 @@
 
     /* !! 이 부분이 모바일에서 표에 가로 스크롤을 다시 적용하는 부분 !! */
     table {
-      display: block; /* 모바일에서 표를 블록 요소처럼 동작시킴 */
-      overflow-x: auto; /* 모바일에서 내용이 넘치면 가로 스크롤 생성 */
+      display: block;
+      overflow-x: auto;
     }
 
     th, td {
-      white-space: nowrap; /* 모바일에서 셀 내용이 줄바꿈되지 않도록 강제 */
+      white-space: nowrap;
     }
   }
 

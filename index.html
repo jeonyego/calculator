@@ -4,109 +4,285 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>국립전통예술고 신입학 내신환산</title>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    h1 { text-align: center; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
-    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
-    .disabled input, .disabled select { background-color: #eee; pointer-events: none; }
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px;
+    font-size: 16px; /* 모바일 최적화: 기본 글꼴 크기 설정 */
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.8em; /* 모바일 최적화: H1 크기 조정 */
+  }
+
+  h3 {
+    font-size: 1.3em; /* 모바일 최적화: H3 크기 조정 */
+    margin-top: 25px; /* 모바일 최적화: 제목 위 여백 조정 */
+    margin-bottom: 15px; /* 모바일 최적화: 제목 아래 여백 조정 */
+  }
+
+  p {
+    font-size: 0.9em; /* 모바일 최적화: p 태그 글꼴 크기 조정 */
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 20px;
+    display: block; /* 모바일 최적화: 표 자체의 반응성을 높임 */
+    overflow-x: auto; /* 모바일 최적화: 내용이 넘칠 경우 가로 스크롤 생성 */
+    -webkit-overflow-scrolling: touch; /* 모바일 최적화: iOS에서 부드러운 스크롤 */
+  }
+
+  th, td {
+    border: 1px solid #aaa;
+    padding: 8px;
+    text-align: center;
+    white-space: nowrap; /* 모바일 최적화: 셀 내용이 줄바꿈되지 않도록 설정 (가로 스크롤 유도) */
+    min-width: 60px; /* 모바일 최적화: 각 셀의 최소 너비 설정 (너무 작아지는 것 방지) */
+  }
+
+  /* 모바일 최적화: 학기 셀은 좀 더 넓게 */
+  th:first-child, td:first-child {
+    min-width: 100px;
+  }
+
+  .disabled input, .disabled select {
+    background-color: #eee;
+    pointer-events: none;
+  }
+
+  .calc-button {
+    padding: 14px 28px;
+    font-size: 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 30px 0;
+    display: block;
+    width: 100%;
+  }
+
+  .calc-button:hover {
+    background-color: #218838;
+  }
+
+  .results {
+    font-size: 18px;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  #final-score {
+    font-size: 28px;
+    font-weight: bold;
+    color: red;
+    margin-top: 30px;
+    text-align: center;
+  }
+
+  /* --- 설명서 모달 관련 CSS --- */
+  .modal {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed; /* 고정 위치 */
+    z-index: 1000; /* 다른 요소 위에 표시 */
+    left: 0;
+    top: 0;
+    width: 100%; /* 전체 너비 */
+    height: 100%; /* 전체 높이 */
+    overflow: auto; /* 내용이 넘칠 경우 스크롤 */
+    background-color: rgba(0,0,0,0.7); /* 반투명 검정 배경 */
+    padding-top: 60px; /* 상단 여백 */
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 상단 5%, 좌우 자동 마진으로 중앙 정렬 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* 내용 영역 너비 */
+    max-width: 800px; /* 최대 너비 */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    position: relative; /* 닫기 버튼 위치 지정을 위해 */
+  }
+
+  .close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+  .close-button:hover,
+  .close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* 안내문 내용 스타일 */
+  .guide-body {
+    font-family: sans-serif;
+    padding: 0px;
+    line-height: 1.6;
+  }
+
+  .guide-body h1 {
+    text-align: center;
+    color: #333;
+    font-size: 2em; /* 모달 내 h1 조정 */
+  }
+
+  .guide-body h2 {
+    color: #555;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    font-size: 1.5em; /* 모달 내 h2 조정 */
+  }
+
+  .guide-body p {
+    margin-bottom: 10px;
+  }
+
+  .guide-image-container {
+    text-align: center;
+    margin: 20px 0;
+  }
+
+  .guide-image-container img {
+    max-width: 80%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .guide-note {
+    background-color: #f9f9f9;
+    border-left: 5px solid #ffcc00;
+    padding: 10px 15px;
+    margin-top: 20px;
+    color: #555;
+  }
+
+  .guide-body ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+
+  .guide-body li {
+    margin-bottom: 5px;
+  }
+
+  .guide-highlight {
+    color: red;
+    font-weight: bold;
+  }
+
+  /* 설명서 버튼 스타일 */
+  .guide-button {
+    padding: 10px 20px;
+    font-size: 16px; /* 모바일 최적화: 버튼 글꼴 크기 조정 */
+    background-color: #007bff; /* 파란색 계열 */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px; /* 다른 요소와 간격 */
+  }
+
+  .guide-button:hover {
+    background-color: #0056b3;
+  }
+
+  .center-button-container {
+    text-align: center; /* 이 컨테이너 안의 내용을 가운데 정렬합니다. */
+    margin-bottom: 20px; /* 버튼 아래 여백을 줍니다. */
+  }
+
+  /* 모바일 최적화: 입력 필드 크기 및 정렬 */
+  input[type="number"] {
+    width: 100%; /* 너비를 100%로 맞춰줌 */
+    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+    padding: 8px 5px;
+    font-size: 1em;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  select {
+    width: 100%; /* 너비를 100%로 맞춰줌 */
+    box-sizing: border-box;
+    padding: 8px 5px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    text-align-last: center; /* 드롭다운 화살표 위치에 따라 텍스트 정렬 */
+  }
+
+  /* --- 미디어 쿼리 (모바일 화면에만 적용될 CSS) --- */
+  /* 스마트폰 화면 (너비 768px 이하) */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 1.6em; /* 모바일 H1 크기 좀 더 줄임 */
+    }
+
+    h3 {
+      font-size: 1.2em; /* 모바일 H3 크기 좀 더 줄임 */
+    }
+
     .calc-button {
-      padding: 14px 28px;
-      font-size: 20px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      margin: 30px 0;
-      display: block;
-      width: 100%;
+      font-size: 18px; /* 버튼 글꼴 크기 조정 */
+      padding: 12px 20px;
     }
-    .calc-button:hover { background-color: #218838; }
-    .results { font-size: 18px; margin-top: 10px; text-align: center; }
+
+    .results {
+      font-size: 16px; /* 결과 텍스트 크기 조정 */
+    }
+
     #final-score {
-      font-size: 28px;
-      font-weight: bold;
-      color: red;
-      margin-top: 30px;
-      text-align: center;
+      font-size: 24px; /* 최종 점수 크기 조정 */
     }
 
-    /* --- 설명서 모달 관련 CSS 추가 시작 --- */
-    .modal {
-      display: none; /* 기본적으로 숨김 */
-      position: fixed; /* 고정 위치 */
-      z-index: 1000; /* 다른 요소 위에 표시 */
-      left: 0;
-      top: 0;
-      width: 100%; /* 전체 너비 */
-      height: 100%; /* 전체 높이 */
-      overflow: auto; /* 내용이 넘칠 경우 스크롤 */
-      background-color: rgba(0,0,0,0.7); /* 반투명 검정 배경 */
-      padding-top: 60px; /* 상단 여백 */
-    }
-
+    /* 모달 내용 폭 조정 */
     .modal-content {
-      background-color: #fefefe;
-      margin: 5% auto; /* 상단 5%, 좌우 자동 마진으로 중앙 정렬 */
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%; /* 내용 영역 너비 */
-      max-width: 800px; /* 최대 너비 */
-      border-radius: 8px;
-      box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-      position: relative; /* 닫기 버튼 위치 지정을 위해 */
+      width: 95%; /* 모바일에서 모달 너비를 더 넓게 */
+      margin: 3% auto; /* 상단 마진도 줄임 */
+      padding: 15px;
     }
 
-    .close-button {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      position: absolute;
-      top: 10px;
-      right: 20px;
+    /* 모달 내 이미지 크기 조정 */
+    .guide-image-container img {
+        max-width: 100%; /* 이미지 크기 모바일 환경에 맞게 조정 */
     }
 
-    .close-button:hover,
-    .close-button:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    /* 안내문 내용 스타일 (이전 답변에서 제공된 안내문 CSS를 그대로 사용) */
-    .guide-body { font-family: sans-serif; padding: 0px; line-height: 1.6; }
-    .guide-body h1 { text-align: center; color: #333; font-size: 2em; } /* 모달 내 h1 조정 */
-    .guide-body h2 { color: #555; border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 20px; font-size: 1.5em; } /* 모달 내 h2 조정 */
-    .guide-body p { margin-bottom: 10px; }
-    .guide-image-container { text-align: center; margin: 20px 0; }
-    .guide-image-container img { max-width: 80%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1); }
-    .guide-note { background-color: #f9f9f9; border-left: 5px solid #ffcc00; padding: 10px 15px; margin-top: 20px; color: #555; }
-    .guide-body ul { list-style-type: disc; margin-left: 20px; }
-    .guide-body li { margin-bottom: 5px; }
-    .guide-highlight { color: red; font-weight: bold; }
-    /* --- 설명서 모달 관련 CSS 추가 끝 --- */
-
-    /* 설명서 버튼 스타일 */
-    .guide-button {
-        padding: 10px 20px;
-        font-size: 16px;
-        background-color: #007bff; /* 파란색 계열 */
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 20px; /* 다른 요소와 간격 */
-    }
-    .guide-button:hover {
-        background-color: #0056b3;
-    }
+    /* 설명서 버튼을 가운데 정렬하기 위한 컨테이너 조정 */
     .center-button-container {
-        text-align: center; /* 이 컨테이너 안의 내용을 가운데 정렬합니다. */
-        margin-bottom: 20px; /* 버튼 아래 여백을 줍니다. */
+        margin-bottom: 15px; /* 모바일 여백 조정 */
     }
-  </style>
+  }
+
+  /* 더 작은 화면 (예: 아이폰 SE 등)을 위한 추가 조정 */
+  @media (max-width: 480px) {
+    th, td {
+      padding: 6px;
+      min-width: 50px; /* 더 작은 화면에서 셀 너비 최소화 */
+    }
+    th:first-child, td:first-child {
+      min-width: 80px; /* 학기 셀도 더 줄임 */
+    }
+  }
+</style>
 </head>
 <body>
   <h1>국립전통예술고 신입학 내신환산</h1>

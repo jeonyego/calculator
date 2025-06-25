@@ -16,14 +16,23 @@
     font-size: 1.8em; /* 모바일 최적화: H1 크기 조정 */
   }
 
-  h3 {
-    font-size: 1.3em; /* 모바일 최적화: H3 크기 조정 */
-    margin-top: 25px; /* 모바일 최적화: 제목 위 여백 조정 */
-    margin-bottom: 15px; /* 모바일 최적화: 제목 아래 여백 조정 */
+  p { /* 이 p 태그는 h1 아래의 설명 텍스트입니다. */
+    text-align: center; /* 이미 가운데 정렬되어 있음 */
+    font-size: 0.9em;
   }
 
-  p {
-    font-size: 0.9em;
+  /* 새로운 메인 콘텐츠 래퍼 */
+  .main-content-wrapper {
+    max-width: 900px; /* 원하는 최대 너비 설정 (이 값을 조정하여 전체적인 폭 제어) */
+    margin: 0 auto; /* 좌우 자동 마진으로 가운데 정렬 */
+    padding: 0 10px; /* 좌우 패딩을 주어 내용이 너무 가장자리에 붙지 않도록 */
+  }
+
+  h3 {
+    font-size: 1.3em; /* 모바일 최적화: H3 크기 조정 */
+    margin-top: 25px; /* 제목 위 여백 조정 */
+    margin-bottom: 15px; /* 제목 아래 여백 조정 */
+    text-align: left; /* 교과/출결 점수 환산 제목은 왼쪽 정렬 (표에 맞춤) */
   }
 
   table {
@@ -53,7 +62,7 @@
     pointer-events: none;
   }
 
-  /* '내신 점수 계산' 버튼 스타일 수정 */
+  /* '내신 점수 계산' 버튼 스타일 */
   .calc-button {
     padding: 14px 28px;
     font-size: 20px;
@@ -239,6 +248,11 @@
       padding: 10px; /* 모바일에서 좌우 여백을 줄임 */
     }
 
+    .main-content-wrapper { /* 모바일에서는 래퍼의 최대 너비 제한 해제 */
+      max-width: none;
+      padding: 0; /* 모바일에서는 래퍼의 좌우 패딩 제거 */
+    }
+
     h1 {
       font-size: 1.6em;
     }
@@ -263,10 +277,10 @@
       font-size: 24px;
     }
 
-    /* !! 이 부분이 모달 크기 조정의 핵심입니다. !! */
+    /* 모달 내용 폭 조정 */
     .modal-content {
-      width: 85%; /* 기존 95%에서 85%로 줄여서 모달 폭을 좁힘 */
-      margin: 7% auto; /* 기존 3%에서 7%로 늘려 상단 여백을 더 확보 */
+      width: 85%;
+      margin: 7% auto;
       padding: 15px;
     }
 

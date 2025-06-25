@@ -23,7 +23,7 @@
   }
 
   p {
-    font-size: 0.9em; /* 모바일 최적화: p 태그 글꼴 크기 조정 */
+    font-size: 0.9em;
   }
 
   table {
@@ -53,6 +53,7 @@
     pointer-events: none;
   }
 
+  /* '내신 점수 계산' 버튼 스타일 수정 */
   .calc-button {
     padding: 14px 28px;
     font-size: 20px;
@@ -61,9 +62,10 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin: 30px 0;
+    margin: 30px auto; /* 좌우 마진을 auto로 설정하여 가운데 정렬 */
     display: block;
-    width: 100%;
+    width: 100%; /* 기본 너비는 100%로 유지 (모바일 호환) */
+    max-width: 300px; /* 데스크톱에서 버튼의 최대 너비 설정 */
   }
 
   .calc-button:hover {
@@ -86,28 +88,28 @@
 
   /* --- 설명서 모달 관련 CSS --- */
   .modal {
-    display: none; /* 기본적으로 숨김 */
-    position: fixed; /* 고정 위치 */
-    z-index: 1000; /* 다른 요소 위에 표시 */
+    display: none;
+    position: fixed;
+    z-index: 1000;
     left: 0;
     top: 0;
-    width: 100%; /* 전체 너비 */
-    height: 90%; /* 전체 높이 */
-    overflow: auto; /* 내용이 넘칠 경우 스크롤 */
-    background-color: rgba(0,0,0,0.7); /* 반투명 검정 배경 */
-    padding-top: 60px; /* 상단 여백 */
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    padding-top: 60px;
   }
 
   .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* 상단 5%, 좌우 자동 마진으로 중앙 정렬 */
+    margin: 5% auto; /* 이 부분은 데스크톱/기본 설정 */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* 내용 영역 너비 */
-    max-width: 800px; /* 최대 너비 */
+    width: 80%; /* 이 부분은 데스크톱/기본 설정 */
+    max-width: 800px;
     border-radius: 8px;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
-    position: relative; /* 닫기 버튼 위치 지정을 위해 */
+    position: relative;
   }
 
   .close-button {
@@ -137,7 +139,7 @@
   .guide-body h1 {
     text-align: center;
     color: #333;
-    font-size: 2em; /* 모달 내 h1 조정 */
+    font-size: 2em;
   }
 
   .guide-body h2 {
@@ -145,7 +147,7 @@
     border-bottom: 2px solid #eee;
     padding-bottom: 5px;
     margin-top: 20px;
-    font-size: 1.5em; /* 모달 내 h2 조정 */
+    font-size: 1.5em;
   }
 
   .guide-body p {
@@ -158,7 +160,7 @@
   }
 
   .guide-image-container img {
-    max-width: 80%;
+    max-width: 80%; /* 데스크톱/기본 설정 */
     height: auto;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -190,13 +192,13 @@
   /* 설명서 버튼 스타일 */
   .guide-button {
     padding: 10px 20px;
-    font-size: 16px; /* 모바일 최적화: 버튼 글꼴 크기 조정 */
-    background-color: #007bff; /* 파란색 계열 */
+    font-size: 16px;
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 20px; /* 다른 요소와 간격 */
+    margin-bottom: 20px;
   }
 
   .guide-button:hover {
@@ -204,14 +206,14 @@
   }
 
   .center-button-container {
-    text-align: center; /* 이 컨테이너 안의 내용을 가운데 정렬합니다. */
-    margin-bottom: 20px; /* 버튼 아래 여백을 줍니다. */
+    text-align: center;
+    margin-bottom: 20px;
   }
 
   /* 모바일 최적화: 입력 필드 크기 및 정렬 */
   input[type="number"] {
-    width: 100%; /* 너비를 100%로 맞춰줌 */
-    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록 */
+    width: 100%;
+    box-sizing: border-box;
     padding: 8px 5px;
     font-size: 1em;
     text-align: center;
@@ -220,55 +222,62 @@
   }
 
   select {
-    width: 100%; /* 너비를 100%로 맞춰줌 */
+    width: 100%;
     box-sizing: border-box;
     padding: 8px 5px;
     font-size: 1em;
     border: 1px solid #ccc;
     border-radius: 4px;
-    text-align: center; /* 텍스트 가운데 정렬 */
-    text-align-last: center; /* 드롭다운 화살표 위치에 따라 텍스트 정렬 */
+    text-align: center;
+    text-align-last: center;
   }
 
   /* --- 미디어 쿼리 (모바일 화면에만 적용될 CSS) --- */
   /* 스마트폰 화면 (너비 768px 이하) */
   @media (max-width: 768px) {
+    body {
+      padding: 10px; /* 모바일에서 좌우 여백을 줄임 */
+    }
+
     h1 {
-      font-size: 1.6em; /* 모바일 H1 크기 좀 더 줄임 */
+      font-size: 1.6em;
     }
 
     h3 {
-      font-size: 1.2em; /* 모바일 H3 크기 좀 더 줄임 */
+      font-size: 1.2em;
     }
 
+    /* 모바일에서는 '내신 점수 계산' 버튼이 다시 100% 너비를 차지하도록 */
     .calc-button {
-      font-size: 18px; /* 버튼 글꼴 크기 조정 */
+      font-size: 18px;
       padding: 12px 20px;
+      width: 100%; /* 모바일에서 다시 100% 너비 */
+      max-width: none; /* 모바일에서 최대 너비 제한 해제 */
     }
 
     .results {
-      font-size: 16px; /* 결과 텍스트 크기 조정 */
+      font-size: 16px;
     }
 
     #final-score {
-      font-size: 24px; /* 최종 점수 크기 조정 */
+      font-size: 24px;
     }
 
-    /* 모달 내용 폭 조정 */
+    /* !! 이 부분이 모달 크기 조정의 핵심입니다. !! */
     .modal-content {
-      width: 85%; /* 모바일에서 모달 너비를 더 넓게 */
-      margin: 3% auto; /* 상단 마진도 줄임 */
+      width: 85%; /* 기존 95%에서 85%로 줄여서 모달 폭을 좁힘 */
+      margin: 7% auto; /* 기존 3%에서 7%로 늘려 상단 여백을 더 확보 */
       padding: 15px;
     }
 
     /* 모달 내 이미지 크기 조정 */
     .guide-image-container img {
-        max-width: 100%; /* 이미지 크기 모바일 환경에 맞게 조정 */
+        max-width: 100%;
     }
 
     /* 설명서 버튼을 가운데 정렬하기 위한 컨테이너 조정 */
     .center-button-container {
-        margin-bottom: 15px; /* 모바일 여백 조정 */
+        margin-bottom: 15px;
     }
   }
 
@@ -276,10 +285,10 @@
   @media (max-width: 480px) {
     th, td {
       padding: 6px;
-      min-width: 50px; /* 더 작은 화면에서 셀 너비 최소화 */
+      min-width: 50px;
     }
     th:first-child, td:first-child {
-      min-width: 80px; /* 학기 셀도 더 줄임 */
+      min-width: 80px;
     }
   }
 </style>

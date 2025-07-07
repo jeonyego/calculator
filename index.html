@@ -322,16 +322,39 @@
       min-width: 80px; /* 학기 셀도 더 줄임  */
     }
   }
-.quick-menu {
+/* 퀵메뉴 토글 버튼 */
+.quick-toggle-btn {
   position: fixed;
   top: 50%;
   left: 0;
+  transform: translateY(-50%);
+  background-color: #2c7be5;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+/* 퀵메뉴 본체 (기본은 숨김) */
+.quick-menu {
+  position: fixed;
+  top: 50%;
+  left: -180px; /* 메뉴 너비만큼 숨김 */
   transform: translateY(-50%);
   background: #2c7be5;
   padding: 12px 10px;
   border-radius: 0 10px 10px 0;
   box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+  transition: left 0.3s ease;
   z-index: 9999;
+  width: 160px;
+}
+
+.quick-menu.open {
+  left: 0; /* 열릴 때 왼쪽으로 나옴 */
 }
 
 .quick-menu a {
@@ -350,33 +373,36 @@
   background-color: #1a5cd8;
 }
 
-/* 모바일 대응: 왼쪽 세로 → 하단 가로 메뉴로 전환 */
+/* 모바일에서는 아래쪽 가로 메뉴로 */
 @media (max-width: 600px) {
+  .quick-toggle-btn {
+    display: none;
+  }
+
   .quick-menu {
-    top: auto !important;
+    top: auto;
     bottom: 0;
-    left: 0;
+    left: 0 !important;
     right: 0;
-    transform: none !important;
+    transform: none;
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
     border-radius: 0;
-    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+    width: 100%;
   }
 
   .quick-menu a {
     margin: 0;
     padding: 8px 12px;
     font-size: 0.95rem;
-    border-radius: 4px;
     white-space: nowrap;
   }
 
   .main-content-wrapper {
-    padding-bottom: 60px; /* 하단 메뉴가 가리지 않도록 여백 추가 */
+    padding-bottom: 60px;
   }
-}  
+} 
 </style>
 </head>
 <body>
@@ -492,6 +518,21 @@
   </div>
 
   <script src="script.js"></script>
+<script>
+  function toggleQuickMenu() {
+    const menu = document.getElementById('quickMenu');
+    const icon = document.getElementById('quickMenuIcon');
+    const isOpen = menu.classList.toggle('open');
+
+    // 아이콘 변경
+    icon.textContent = isOpen ? '×' : '☰';
+  }
+</script>
+<!-- 퀵메뉴 토글 버튼 -->
+<div class="quick-toggle-btn" onclick="toggleQuickMenu()">
+  <span id="quickMenuIcon">☰</span>
+</div>
+
 <div class="quick-menu">
   <a href="https://kugak-am.sen.hs.kr/175213/subMenu.do" target="_blank">학교 홈페이지</a>
   <a href="https://sites.google.com/view/jeontongyego" target="_blank">소개 사이트</a>

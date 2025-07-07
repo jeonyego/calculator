@@ -322,6 +322,61 @@
       min-width: 80px; /* 학기 셀도 더 줄임  */
     }
   }
+.quick-menu {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  background: #2c7be5;
+  padding: 12px 10px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+  z-index: 9999;
+}
+
+.quick-menu a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 8px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.quick-menu a:hover {
+  background-color: #1a5cd8;
+}
+
+/* 모바일 대응: 왼쪽 세로 → 하단 가로 메뉴로 전환 */
+@media (max-width: 600px) {
+  .quick-menu {
+    top: auto !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none !important;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-radius: 0;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .quick-menu a {
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .main-content-wrapper {
+    padding-bottom: 60px; /* 하단 메뉴가 가리지 않도록 여백 추가 */
+  }
+}  
 </style>
 </head>
 <body>
@@ -437,5 +492,11 @@
   </div>
 
   <script src="script.js"></script>
+<div class="quick-menu">
+  <a href="https://kugak-am.sen.hs.kr/175213/subMenu.do" target="_blank">학교 홈페이지</a>
+  <a href="https://sites.google.com/view/jeontongyego" target="_blank">소개 사이트</a>
+  <a href="https://kugak-am.sen.hs.kr/131716/subMenu.do" target="_blank">2026 모집 요강</a>
+</div>
+  
 </body>
 </html>

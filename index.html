@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>국립전통예술고 신입학 내신환산</title>
+<style>
+  body {
+    font-family: sans-serif;
+    padding: 20px; /* */
+    font-size: 16px; /* 모바일 최적화: 기본 글꼴 크기 설정  */
+  }
+
+  h1 {
+    text-align: center; /* */
+    font-size: 1.8em; /* 모바일 최적화: H1 크기 조정  */
+  }
+
+  p { /* 이 p 태그는 h1 아래의 설명 텍스트입니다. */
+    text-align: center; /* */
+    font-size: 0.9em; /* */
+  }
+
+  /* 새로운 메인 콘텐츠 래퍼 */
+  .main-content-wrapper {
+    max-width: 900px; /* 원하는 최대 너비 설정 (이 값을 조정하여 전체적인 폭 제어) */
+    margin: 0 auto; /* 좌우 자동 마진으로 가운데 정렬 */
+    padding: 0 10px; /* 좌우 패딩을 주어 내용이 너무 가장자리에 붙지 않도록 */
+  }
+
+  h3 {
+    font-size: 1.3em; /* */
+    margin-top: 25px; /* */
+    margin-bottom: 15px; /* */
+    text-align: left; /* 교과/출결 점수 환산 제목은 왼쪽 정렬 (표에 맞춤) */
+  }
+
+  table {
+    border-collapse: collapse; /* */
+    width: 100%; /* */
+    margin-bottom: 20px; /* */
+    /* 데스크톱에서는 display: block; 과 overflow-x: auto; 제거 */
+  }
+
+  th, td {
+    border: 1px solid #aaa; /* */
+    padding: 8px; /* */
+    text-align: center; /* */
+    /* 데스크톱에서는 white-space: nowrap; 제거 (내용이 길면 줄바꿈 허용) */
+    min-width: 60px; /* */
+  }
+
+  /* 학기 셀은 좀 더 넓게 */
+  th:first-child, td:first-child {
+    min-width: 100px; /* */
+  }
+
+  .disabled input, .disabled select {
+    background-color: #eee; /* */
+    pointer-events: none; /* */
+  }
+
+  /* '내신 점수 계산' 버튼 스타일 */
+  .calc-button {
+    padding: 14px 28px; /* */
+    font-size: 20px; /* */
+    background-color: #28a745; /* */
+    color: white; /* */
+    border: none; /* */
+    border-radius: 10px; /* */
+    cursor: pointer; /* */
+    margin: 30px auto; /* 좌우 마진을 auto로 설정하여 가운데 정렬 */
+    display: block; /* */
+    width: 100%; /* */
+    max-width: 300px; /* 데스크톱에서 버튼의 최대 너비 설정 */
+  }
+
+  .calc-button:hover {
+    background-color: #218838; /* */
+  }
+
+  .results {
+    font-size: 18px; /* */
+    margin-top: 10px; /* */
+    text-align: center; /* */
+  }
+
+  #final-score {
+    font-size: 28px; /* */
+    font-weight: bold; /* */
+    color: red; /* */
+    margin-top: 30px; /* */
+    text-align: center; /* */
+  }
+
+  /* --- 설명서 모달 관련 CSS --- */
+  .modal {
+    display: none; /* 기본적으로 숨김  */
+    position: fixed; /* 고정 위치  */
+    z-index: 1000; /* 다른 요소 위에 표시  */
+    left: 0; /* */
+    top: 0; /* */
+    width: 100%; /* 전체 너비  */
+    height: 90%; /* 전체 높이  */
+    overflow: auto; /* 내용이 넘칠 경우 스크롤  */
+    background-color: rgba(0,0,0,0.7); /* 반투명 검정 배경  */
+    padding-top: 60px; /* 상단 여백  */
+  }
+
+  .modal-content {
+    background-color: #fefefe; /* */
+    margin: 5% auto; /* 상단 5%, 좌우 자동 마진으로 중앙 정렬  */
+    padding: 20px; /* */
+    border: 1px solid #888; /* */
+    width: 80%; /* 내용 영역 너비  */
+    max-width: 800px; /* 최대 너비  */
+    border-radius: 8px; /* */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); /* */
+    position: relative; /* 닫기 버튼 위치 지정을 위해  */
+  }
+
+  .close-button {
+    color: #aaa; /* */
+    float: right; /* */
+    font-size: 28px; /* */
+    font-weight: bold; /* */
+    position: absolute; /* */
+    top: 10px; /* */
+    right: 20px; /* */
+  }
+
+  .close-button:hover,
+  .close-button:focus {
+    color: black; /* */
+    text-decoration: none; /* */
+    cursor: pointer; /* */
+  }
+
+  /* 안내문 내용 스타일 */
+  .guide-body {
+    font-family: sans-serif; /* */
+    padding: 0px; /* */
+    line-height: 1.6; /* */
+    text-align: left; /* .guide-body 내부의 텍스트를 모두 왼쪽 정렬합니다. */
+  }
+
+  .guide-body h1 {
+    text-align: center; /* 모달 내 최상위 제목은 가운데 정렬 유지 */
+    color: #333; /* */
+    font-size: 2em; /* */
+  }
+
+  .guide-body h2 {
+    color: #555; /* */
+    border-bottom: 2px solid #eee; /* */
+    padding-bottom: 5px; /* */
+    margin-top: 20px; /* */
+    font-size: 1.5em; /* */
+    /* h2는 .guide-body에 의해 왼쪽 정렬됩니다. */
+  }
+
+  /* 모달 내 p 태그에 대한 기본 정렬을 왼쪽으로 지정 */
+  .guide-body p {
+    margin-bottom: 10px; /* */
+    text-align: left; /* 모달 내 p 태그도 왼쪽 정렬합니다. */
+  }
+
+  .guide-image-container {
+    text-align: center; /* 이미지 컨테이너 내의 모든 인라인 콘텐츠 (이미지, 텍스트)를 가운데 정렬 */
+    margin: 20px 0; /* */
+  }
+
+  /* !추가: .guide-image-container 내부의 p 태그만 특별히 가운데 정렬 */
+  .guide-image-container p {
+    text-align: center;
+  }
+
+  .guide-image-container img {
+    max-width: 80%; /* */
+    height: auto; /* */
+    border: 1px solid #ddd; /* */
+    border-radius: 8px; /* */
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.1); /* */
+  }
+
+  .guide-note {
+    background-color: #f9f9f9; /* */
+    border-left: 5px solid #ffcc00; /* */
+    padding: 10px 15px; /* */
+    margin-top: 20px; /* */
+    color: #555; /* */
+  }
+
+  .guide-body ul {
+    list-style-type: disc; /* */
+    margin-left: 20px; /* */
+  }
+
+  .guide-body li {
+    margin-bottom: 5px; /* */
+  }
+
+  .guide-highlight {
+    color: red; /* */
+    font-weight: bold; /* */
+  }
+
+  /* 설명서 버튼 스타일 */
+  .guide-button {
+    padding: 10px 20px; /* */
+    font-size: 16px; /* 모바일 최적화: 버튼 글꼴 크기 조정  */
+    background-color: #007bff; /* 파란색 계열  */
+    color: white; /* */
+    border: none; /* */
+    border-radius: 5px; /* */
+    cursor: pointer; /* */
+    margin-bottom: 20px; /* 다른 요소와 간격  */
+  }
+
+  .guide-button:hover {
+    background-color: #0056b3; /* */
+  }
+
+  .center-button-container {
+    text-align: center; /* 이 컨테이너 안의 내용을 가운데 정렬합니다. */
+    margin-bottom: 20px; /* 버튼 아래 여백을 줍니다. */
+  }
+
+  /* 입력 필드 크기 및 정렬 (공통) */
+  input[type="number"] {
+    width: 100%; /* 너비를 100%로 맞춰줌  */
+    box-sizing: border-box; /* 패딩과 보더가 너비에 포함되도록  */
+    padding: 8px 5px; /* */
+    font-size: 1em; /* */
+    text-align: center; /* */
+    border: 1px solid #ccc; /* */
+    border-radius: 4px; /* */
+  }
+
+  select {
+    width: 100%; /* 너비를 100%로 맞춰줌  */
+    box-sizing: border-box; /* */
+    padding: 8px 5px; /* */
+    font-size: 1em; /* */
+    border: 1px solid #ccc; /* */
+    border-radius: 4px; /* */
+    text-align: center; /* 텍스트 가운데 정렬  */
+    text-align-last: center; /* 드롭다운 화살표 위치에 따라 텍스트 정렬  */
+  }
+
+  /* --- 미디어 쿼리 (모바일 화면에만 적용될 CSS) --- */
+  /* 스마트폰 화면 (너비 768px 이하) */
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+
+    .main-content-wrapper {
+      max-width: none;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 1.6em; /* 모바일 H1 크기 좀 더 줄임  */
+    }
+
+    h3 {
+      font-size: 1.2em; /* 모바일 H3 크기 좀 더 줄임  */
+    }
+
+    /* 모바일에서는 '내신 점수 계산' 버튼이 다시 100% 너비를 차지하도록 */
+    .calc-button {
+      font-size: 18px; /* 버튼 글꼴 크기 조정  */
+      padding: 12px 20px; /* */
+      width: 100%;
+      max-width: none;
+    }
+
+    .results {
+      font-size: 16px; /* 결과 텍스트 크기 조정  */
+    }
+
+    #final-score {
+      font-size: 24px; /* 최종 점수 크기 조정  */
+    }
+
+    /* 모달 내용 폭 조정 */
+    .modal-content {
+      width: 85%; /* 모바일에서 모달 너비를 더 넓게  */
+      margin: 3% auto; /* 상단 마진도 줄임  */
+      padding: 15px; /* */
+    }
+
+    /* 모달 내 이미지 크기 조정 */
+    .guide-image-container img {
+        max-width: 100%; /* 이미지 크기 모바일 환경에 맞게 조정  */
+    }
+
+    /* 설명서 버튼을 가운데 정렬하기 위한 컨테이너 조정 */
+    .center-button-container {
+        margin-bottom: 15px; /* 모바일 여백 조정  */
+    }
+
+    /* 이 부분이 모바일에서 표에 가로 스크롤을 다시 적용하는 부분 */
+    table {
+      display: block; /* 모바일에서 표를 블록 요소처럼 동작시킴  */
+      overflow-x: auto; /* 모바일에서 내용이 넘치면 가로 스크롤 생성  */
+    }
+
+    th, td {
+      white-space: nowrap; /* 모바일에서 셀 내용이 줄바꿈되지 않도록 강제  */
+    }
+  }
+
+  /* 더 작은 화면 (예: 아이폰 SE 등)을 위한 추가 조정 */
+  @media (max-width: 480px) {
+    th, td {
+      padding: 6px; /* */
+      min-width: 50px; /* 더 작은 화면에서 셀 너비 최소화  */
+    }
+    th:first-child, td:first-child {
+      min-width: 80px; /* 학기 셀도 더 줄임  */
+    }
+  }
+/* 퀵메뉴 토글 버튼 */
+.quick-toggle-btn {
+  position: fixed;
+  top: 30%;
+  left: 0;
+  transform: translateY(-50%);
+  background-color: #2c7be5;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 0 6px 6px 0;
+  font-size: 1.2rem;
+  cursor: pointer;
+  z-index: 10000;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+/* 퀵메뉴 본체 (기본은 숨김) */
+.quick-menu {
+  position: fixed;
+  top: 50%;
+  left: -180px; /* 메뉴 너비만큼 숨김 */
+  transform: translateY(-50%);
+  background: #2c7be5;
+  padding: 12px 10px;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.15);
+  transition: left 0.3s ease;
+  z-index: 9999;
+  width: 160px;
+}
+
+.quick-menu.open {
+  left: 0; /* 열릴 때 왼쪽으로 나옴 */
+}
+
+.quick-menu a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  margin: 8px 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.quick-menu a:hover {
+  background-color: #1a5cd8;
+}
+
+/* 모바일에서는 아래쪽 가로 메뉴로 */
+@media (max-width: 600px) {
+  .quick-toggle-btn {
+    display: none;
+  }
+
+  .quick-menu {
+    top: auto;
+    bottom: 0;
+    left: 0 !important;
+    right: 0;
+    transform: none;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .quick-menu a {
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  .main-content-wrapper {
+    padding-bottom: 60px;
+  }
+} 
+</style>
+</head>
+<body>
+  <h1>국립전통예술고 신입학 내신환산</h1>
+  <p style="text-align: center; color: #0000cd; font-size: 14px;">
+    ● 본 자료는 공신력이 없습니다. 참고용으로만 활용하시기 바랍니다.<br/>
+    ● 교육청의 지침에 따라 내신 점수의 구체적인 계산 방법과 결과는 달라질 수 있습니다.<br/>
+    ● 본 자료는 데스크탑 환경에서 사용하기에 최적화되어 있습니다. 데스크탑에서 활용하시기를 권장합니다.<br/>
+
+  </p>
+  <div class="center-button-container">
+  <button id="openGuideButton" class="guide-button">설명서</button>
+  </div>
+<div class="main-content-wrapper">
+  <h3>교과 점수 환산</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>학기</th>
+        <th>국어</th>
+        <th>사회</th>
+        <th>역사</th>
+        <th>도덕</th>
+        <th>수학</th>
+        <th>과학</th>
+        <th>기술가정</th>
+        <th>영어</th>
+        <th>선택1</th>
+        <th>선택2</th>
+        <th>선택3</th>
+        <th>체육</th>
+        <th>음악</th>
+        <th>미술</th>
+      </tr>
+    </thead>
+    <tbody id="scoreTable"></tbody>
+  </table>
+
+  <h3>출결 점수 환산</h3>
+  <table>
+    <tr>
+      <th>미인정 지각</th>
+      <th>미인정 조퇴</th>
+      <th>미인정 결과</th>
+      <th>미인정 결석</th>
+    </tr>
+    <tr>
+      <td><input type="number" id="late" min="0" value="0"/></td>
+      <td><input type="number" id="earlyLeave" min="0" value="0"/></td>
+      <td><input type="number" id="missing" min="0" value="0"/></td>
+      <td><input type="number" id="absence" min="0" value="0"/></td>
+    </tr>
+  </table>
+
+  <button id="calculateAllButton" class="calc-button">내신 점수 계산</button>
+
+  <div class="results" id="result"></div>
+  <div class="results" id="absence-days"></div>
+  <div class="results" id="convertedScore"></div>
+  <div class="results" id="attendance-score-result"></div>
+  <div class="results" id="final-score"></div>
+</div>
+  <div id="guideModal" class="modal">
+    <div class="modal-content">
+      <span id="closeGuideButton" class="close-button">&times;</span>
+      <div class="guide-body">
+        <h1>국립전통예술고 신입학 내신환산기 사용 안내</h1>
+
+        <div class="guide-note">
+          <p>● 본 내신환산기는 국립전통예술고등학교 신입생 내신 성적 산출에 참고용으로 활용될 수 있도록 제작되었습니다. 교육청 지침에 따라 실제 내신 점수 계산 방법 및 결과는 달라질 수 있으므로, <span class="guide-highlight">공식적인 자료가 아님</span>을 유의하시기 바랍니다.</p>
+        </div>
+
+        <h2>내신 점수 환산 방법</h2>
+        <ul>
+          <li><p><strong>교과 성적 입력:</strong> 2학년 1학기부터 3학년 2학기까지의 각 학기별 과목 성취도(A, B, C, D, E)를 해당 드롭다운 메뉴에서 선택합니다.</p>
+            <ul>
+              <li>'체육', '음악', '미술' 과목은 성취도 A, B, C만 있습니다.</li>
+              <li>한문, 중국어 등의 과목은 '선택1', '선택2'에 입력해주세요.</li>
+              <li>성적이 없는 과목은 반드시 '없음'을 선택해주세요. (특정 학기의 성적을 모두 제외하고 싶다면, 해당 학기의 "제외" 체크박스를 선택하세요. 해당 학기의 모든 과목 입력란이 비활성화됩니다.)</li>
+              <li>성적이 입력되지 않은 과목이 있는 상태에서 계산을 시도하면 알림창이 나타납니다.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul>
+          <li><p><strong>출결 기록 입력:</strong> 전학년의 미인정 지각, 미인정 조퇴, 미인정 결과, 미인정 결석 일수를 해당하는 입력란에 각각 합산하여 숫자로 기입합니다.</p></li>
+        </ul>
+
+        <div class="guide-image-container">
+          <img src="https://imgur.com/Fbfbz3K.png">
+          <p class="center-text">▲ 교과&출결 점수 입력 예시</p>
+        </div>
+
+        <h2>최종 내신 점수 확인</h2>
+
+            <ul>
+              <li>'성취도 평균' 항목에서 입력된 성적의 평균 점수를 확인할 수 있습니다.</li>
+              <li>'환산 미인정결석일수' 항목에서 입력된 미인정 기록이 환산된 총 미인정 결석 일수를 확인할 수 있습니다. (미인정 지각/조퇴/결과 3회당 미인정결석 1일로 환산)</li>
+              <li>'교과 점수'와 '출결 점수' 항목에서 계산된 점수를 합산하여 내신 점수가 산출됩니다.</li>
+            </ul>
+        <div class="guide-image-container">
+          <img src="https://i.imgur.com/MdKGDYh.png">
+          <p class="center-text">▲ 산출 예시</p>
+        </div>
+<ul></ul>
+        <h2>주의사항:</h2>
+        <ul>
+          <li>본 환산기는 참고용이며, 실제 입학 사정 시 반영되는 내신 점수와는 차이가 있을 수 있습니다.</li>
+          <li>정확한 내신 산정 기준은 국립전통예술고등학교의 신입학 요강을 반드시 확인하시기 바랍니다.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const semesters = [
+        { id: 's2_1', label: '2학년 1학기' },
+        { id: 's2_2', label: '2학년 2학기' },
+        { id: 's3_1', label: '3학년 1학기' },
+        { id: 's3_2', label: '3학년 2학기' }
+    ];
+
+    const fullSubjects = [
+        '국어', '사회', '역사', '도덕', '수학', '과학', '기술가정',
+        '영어', '선택1', '선택2', '선택3', '체육', '음악', '미술'
+    ];
+
+    const limitedSubjects = ['체육', '음악', '미술'];
+
+    const tableBody = document.getElementById('scoreTable');
+    semesters.forEach((sem) => {
+        const tr = document.createElement('tr');
+        tr.id = sem.id;
+        const semesterTd = document.createElement('td');
+        semesterTd.innerHTML = `${sem.label}<br/><label><input type="checkbox" class="exclude-checkbox"> 제외</label>`;
+        tr.appendChild(semesterTd);
+
+        fullSubjects.forEach(subj => {
+            const td = document.createElement('td');
+            const select = document.createElement('select');
+            select.id = `${sem.id}_${subj}`;
+
+            const optionSelect = new Option('선택', '0');
+            select.appendChild(optionSelect);
+
+            const grades = limitedSubjects.includes(subj) ? ['A', 'B', 'C'] : ['A', 'B', 'C', 'D', 'E'];
+            grades.forEach((grade, index) => {
+                const value = 5 - index;
+                const option = new Option(grade, value);
+                select.appendChild(option);
+            });
+
+            const optionNone = new Option('없음', 'none');
+            select.appendChild(optionNone);
+
+            td.appendChild(select);
+            tr.appendChild(td);
+        });
+
+        tableBody.appendChild(tr);
+    });
+
+    // Event delegation for exclude checkboxes
+    document.querySelectorAll('.exclude-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', (event) => {
+            const row = event.target.closest('tr');
+            if (event.target.checked) {
+                row.classList.add('excluded');
+                row.querySelectorAll('select').forEach(select => select.disabled = true);
+            } else {
+                row.classList.remove('excluded');
+                row.querySelectorAll('select').forEach(select => select.disabled = false);
+            }
+        });
+    });
+
+    let academicScore = null;
+    let attendanceScore = null;
+
+    function calculateAll() {
+        calculate();
+        calculateAttendance();
+        updateFinalScore();
+    }
+
+    function calculate() {
+        let total = 0;
+        let count = 0;
+        let hasUnselected = false;
+        document.getElementById('convertedScore').textContent = '-';
+
+        semesters.forEach((sem) => {
+            const row = document.getElementById(sem.id);
+            if (row.classList.contains('excluded')) return;
+
+            fullSubjects.forEach((subj) => {
+                const selectEl = document.getElementById(`${sem.id}_${subj}`);
+                const val = selectEl.value;
+
+                if (val === "0") {
+                    hasUnselected = true;
+                    return;
+                }
+                if (val === "none") return;
+
+                total += parseInt(val);
+                count++;
+            });
+        });
+
+        if (hasUnselected) {
+            alert('성적을 모두 입력해주세요. \n성적이 없는 과목은 "없음"을 선택해주세요.');
+            document.getElementById('result').textContent = '-';
+            return;
+        }
+
+        const averageRaw = count > 0 ? total / count : 0;
+        const averageRounded = Math.round(averageRaw * 1000) / 1000;
+        document.getElementById('result').textContent = `성취도 평균: ${averageRounded.toFixed(3)} 점`;
+
+        const gradeToScore = [
+            [4.800, 160], [4.600, 159], [4.400, 158], [4.200, 156], [4.000, 154],
+            [3.800, 152], [3.600, 149], [3.400, 146], [3.200, 143], [3.000, 140],
+            [2.800, 136], [2.600, 132], [2.400, 127], [2.200, 122], [2.000, 117],
+            [1.800, 112], [1.600, 107], [1.400, 103], [1.200, 101], [1.000, 100]
+        ];
+
+        let converted = 0;
+        for (let [threshold, score] of gradeToScore) {
+            if (averageRounded >= threshold) {
+                converted = score;
+                break;
+            }
+        }
+
+        academicScore = converted;
+        document.getElementById('convertedScore').textContent = `교과 점수: ${converted} 점`;
+    }
+
+    function calculateAttendance() {
+        const late = parseInt(document.getElementById('late').value) || 0;
+        const early = parseInt(document.getElementById('earlyLeave').value) || 0;
+        const missing = parseInt(document.getElementById('missing').value) || 0;
+        const absent = parseInt(document.getElementById('absence').value) || 0;
+        const additionalAbsence = Math.floor((late + early + missing) / 3);
+        const totalAbsence = additionalAbsence + absent;
+
+        let score = 0;
+        if (totalAbsence === 0) score = 40;
+        else if (totalAbsence <= 2) score = 38;
+        else if (totalAbsence <= 4) score = 34;
+        else if (totalAbsence <= 6) score = 28;
+        else score = 20;
+
+        attendanceScore = score;
+        document.getElementById('absence-days').textContent = `환산 미인정결석일수: ${totalAbsence}일`;
+        document.getElementById('attendance-score-result').textContent = `출결 점수: ${score}점`;
+    }
+
+    function updateFinalScore() {
+        if (academicScore !== null && attendanceScore !== null) {
+            const total = academicScore + attendanceScore;
+            document.getElementById('final-score').textContent = `내신 점수: ${total}점`;
+        }
+    }
+
+    // --- 설명서 모달 관련 JavaScript ---
+    const guideModal = document.getElementById('guideModal');
+    const openGuideButton = document.getElementById('openGuideButton');
+    const closeGuideButton = document.getElementById('closeGuideButton');
+    const calculateAllButton = document.getElementById('calculateAllButton');
+
+    openGuideButton.addEventListener('click', () => {
+        guideModal.style.display = 'block';
+    });
+
+    closeGuideButton.addEventListener('click', () => {
+        guideModal.style.display = 'none';
+    });
+
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', (event) => {
+        if (event.target === guideModal) {
+            guideModal.style.display = 'none';
+        }
+    });
+
+    // 계산 버튼 이벤트 리스너 추가
+    calculateAllButton.addEventListener('click', calculateAll);
+});
+  </script>
+<script>
+  function toggleQuickMenu() {
+    const menu = document.getElementById('quickMenu');
+    const icon = document.getElementById('quickMenuIcon');
+    const isOpen = menu.classList.toggle('open');
+
+    // 아이콘 변경
+    icon.textContent = isOpen ? '×' : '☰';
+  }
+</script>
+<!-- 퀵메뉴 토글 버튼 -->
+<div class="quick-toggle-btn" onclick="toggleQuickMenu()">
+  <span id="quickMenuIcon">☰</span>
+</div>
+
+<div id="quickMenu" class="quick-menu">
+  <a href="https://kugak-am.sen.hs.kr/175213/subMenu.do" target="_blank">학교 홈페이지</a>
+  <a href="https://sites.google.com/view/jeontongyego" target="_blank">소개 사이트</a>
+  <a href="https://kugak-am.sen.hs.kr/131716/subMenu.do" target="_blank">2026 모집 요강</a>
+</div>
+  
+</body>
+</html>

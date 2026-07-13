@@ -389,7 +389,7 @@
 
   .quick-menu {
     top: auto;
-    bottom: 0;
+    bottom: 58px;
     left: 0 !important;
     right: 0;
     transform: none;
@@ -411,6 +411,80 @@
     padding-bottom: 60px;
   }
 } 
+
+/* === 모바일 하단 고정 성적 입력 패널 === */
+.mobile-grade-panel {
+  display: none; /* 기본(데스크톱)에서는 숨김 */
+}
+
+@media (max-width: 768px) {
+  .mobile-grade-panel {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background: #fff;
+    border-top: 2px solid #aaa;
+    padding: 8px 4px;
+    justify-content: space-around;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.12);
+  }
+
+  .mobile-grade-panel .grade-btn {
+    flex: 1;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    background: #f5f5f5;
+    color: #333;
+    cursor: pointer;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  .mobile-grade-panel .grade-btn:active {
+    background: #2c7be5;
+    color: #fff;
+  }
+
+  .mobile-grade-panel .grade-btn.disabled-btn {
+    background: #e0e0e0;
+    color: #bbb;
+    pointer-events: none;
+  }
+
+  /* 선택된 셀 강조 */
+  select.mobile-selected-cell {
+    outline: 3px solid #2c7be5 !important;
+    background-color: #e8f0fe !important;
+    border-color: #2c7be5 !important;
+  }
+
+  /* 모바일에서 select의 네이티브 드롭다운 방지 */
+  #scoreTable select {
+    pointer-events: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  /* 모바일에서 select를 감싼 td를 클릭 가능하게 */
+  #scoreTable td {
+    cursor: pointer;
+  }
+
+  /* 하단 패널 + 퀵메뉴 공간 확보 */
+  .main-content-wrapper {
+    padding-bottom: 120px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -701,6 +775,130 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 계산 버튼 이벤트 리스너 추가
     calculateAllButton.addEventListener('click', calculateAll);
+
+    // === 모바일 하단 고정 패널 로직 ===
+    var mobileSelectedCell = null; // 현재 선택된 select 요소
+    var isMobileView = function() {
+        return window.innerWidth <= 768;
+    };
+
+    // select가 포함된 td를 클릭하면 해당 select를 선택 상태로 만든다
+    var scoreTableEl = document.getElementById('scoreTable');
+    scoreTableEl.addEventListener('click', function(e) {
+        if (!isMobileView()) return;
+        var td = e.target.closest('td');
+        if (!td) return;
+        var sel = td.querySelector('select');
+        if (!sel) return;
+        if (sel.disabled) return;
+
+        // 이전 선택 해제
+        if (mobileSelectedCell) {
+            mobileSelectedCell.classList.remove('mobile-selected-cell');
+        }
+        // 새로 선택
+        mobileSelectedCell = sel;
+        mobileSelectedCell.classList.add('mobile-selected-cell');
+        updateGradeBtnState(sel);
+    });
+
+    // 모바일에서 select에 focus가 가면 네이티브 드롭다운 방지
+    scoreTableEl.addEventListener('focus', function(e) {
+        if (!isMobileView()) return;
+        if (e.target.tagName === 'SELECT') {
+            e.target.blur();
+        }
+    }, true);
+
+    // 체육/음악/미술 여부에 따라 D, E 버튼 비활성화
+    var limitedSubjectsSet = ['체육', '음악', '미술'];
+    function updateGradeBtnState(sel) {
+        var panel = document.getElementById('mobileGradePanel');
+        var btns = panel.querySelectorAll('.grade-btn');
+        // select id에서 과목명 추출: 예) s2_1_체육
+        var parts = sel.id.split('_');
+        var subjectName = parts.slice(2).join('_'); // 과목명 (기술가정 등 대응)
+        var isLimited = limitedSubjectsSet.indexOf(subjectName) !== -1;
+
+        btns.forEach(function(btn) {
+            var grade = btn.getAttribute('data-grade');
+            if (isLimited && (grade === 'D' || grade === 'E')) {
+                btn.classList.add('disabled-btn');
+            } else {
+                btn.classList.remove('disabled-btn');
+            }
+        });
+    }
+
+    // 다음 입력 가능한 셀로 이동
+    function moveToNextCell(currentSelect) {
+        var allSelects = [];
+        semesters.forEach(function(sem) {
+            var row = document.getElementById(sem.id);
+            if (row.classList.contains('excluded')) return;
+            fullSubjects.forEach(function(subj) {
+                var s = document.getElementById(sem.id + '_' + subj);
+                if (s && !s.disabled) {
+                    allSelects.push(s);
+                }
+            });
+        });
+
+        var currentIndex = allSelects.indexOf(currentSelect);
+        if (currentIndex === -1) return;
+        var nextIndex = currentIndex + 1;
+        if (nextIndex >= allSelects.length) return; // 마지막 셀이면 이동 안 함
+
+        // 이전 선택 해제
+        if (mobileSelectedCell) {
+            mobileSelectedCell.classList.remove('mobile-selected-cell');
+        }
+        mobileSelectedCell = allSelects[nextIndex];
+        mobileSelectedCell.classList.add('mobile-selected-cell');
+        updateGradeBtnState(mobileSelectedCell);
+
+        // 선택된 셀이 보이도록 스크롤
+        mobileSelectedCell.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+    }
+
+    // 하단 패널 버튼 클릭 이벤트
+    var mobilePanel = document.getElementById('mobileGradePanel');
+    mobilePanel.addEventListener('click', function(e) {
+        var btn = e.target.closest('.grade-btn');
+        if (!btn) return;
+        if (btn.classList.contains('disabled-btn')) return;
+        if (!mobileSelectedCell) {
+            // 선택된 셀이 없으면 첫 번째 활성 셀을 자동 선택
+            var firstSelect = null;
+            for (var i = 0; i < semesters.length; i++) {
+                var row = document.getElementById(semesters[i].id);
+                if (row.classList.contains('excluded')) continue;
+                for (var j = 0; j < fullSubjects.length; j++) {
+                    var s = document.getElementById(semesters[i].id + '_' + fullSubjects[j]);
+                    if (s && !s.disabled) {
+                        firstSelect = s;
+                        break;
+                    }
+                }
+                if (firstSelect) break;
+            }
+            if (!firstSelect) return;
+            mobileSelectedCell = firstSelect;
+            mobileSelectedCell.classList.add('mobile-selected-cell');
+            updateGradeBtnState(mobileSelectedCell);
+        }
+
+        var value = btn.getAttribute('data-value');
+        mobileSelectedCell.value = value;
+
+        // change 이벤트 발생 (기존 로직과의 호환성)
+        var evt = new Event('change', { bubbles: true });
+        mobileSelectedCell.dispatchEvent(evt);
+
+        // 다음 셀로 이동
+        moveToNextCell(mobileSelectedCell);
+    });
+
 });
   </script>
 <script>
@@ -725,5 +923,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 </div>
   
+
+<!-- 모바일 하단 고정 성적 입력 패널 -->
+<div class="mobile-grade-panel" id="mobileGradePanel">
+  <button class="grade-btn" data-grade="A" data-value="5">A</button>
+  <button class="grade-btn" data-grade="B" data-value="4">B</button>
+  <button class="grade-btn" data-grade="C" data-value="3">C</button>
+  <button class="grade-btn" data-grade="D" data-value="2">D</button>
+  <button class="grade-btn" data-grade="E" data-value="1">E</button>
+  <button class="grade-btn" data-grade="없음" data-value="none">없음</button>
+</div>
 </body>
 </html>

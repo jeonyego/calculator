@@ -322,27 +322,11 @@
       min-width: 80px; /* 학기 셀도 더 줄임  */
     }
   }
-/* 퀵메뉴 토글 버튼 */
-.quick-toggle-btn {
-  position: fixed;
-  top: 30%;
-  left: 0;
-  transform: translateY(-50%);
-  background-color: #2c7be5;
-  color: white;
-  padding: 10px 14px;
-  border-radius: 0 6px 6px 0;
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 10000;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-}
-
 /* 퀵메뉴 본체 (기본은 숨김) */
 .quick-menu {
   position: fixed;
-  top: 50%;
-  left: -180px; /* 메뉴 너비만큼 숨김 */
+  top: 30%;
+  left: -160px; /* 메뉴 너비만큼 숨김 */
   transform: translateY(-50%);
   background: #2c7be5;
   padding: 12px 10px;
@@ -357,6 +341,30 @@
   left: 0; /* 열릴 때 왼쪽으로 나옴 */
 }
 
+/* 퀵메뉴 토글 버튼 (이제 quick-menu의 자식으로, 오른쪽에 탭처럼 붙음) */
+.quick-toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: -40px; /* 메뉴 본체 바로 오른쪽에 붙는 탭 */
+  transform: translateY(-50%);
+  width: 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2c7be5;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+}
+
+.quick-toggle-btn:hover {
+  background-color: #1a5cd8;
+}
+
+/* 퀵메뉴 링크 글자 스타일 */
 .quick-menu a {
   display: block;
   color: #fff;
@@ -705,12 +713,10 @@ document.addEventListener('DOMContentLoaded', () => {
     icon.textContent = isOpen ? '×' : '☰';
   }
 </script>
-<!-- 퀵메뉴 토글 버튼 -->
-<div class="quick-toggle-btn" onclick="toggleQuickMenu()">
+<div id="quickMenu" class="quick-menu">
+  <div class="quick-toggle-btn" onclick="toggleQuickMenu()">
   <span id="quickMenuIcon">☰</span>
 </div>
-
-<div id="quickMenu" class="quick-menu">
   <a href="https://kugak-am.sen.hs.kr/175213/subMenu.do" target="_blank">홈페이지</a>
   <a href="https://kugak-am.sen.hs.kr/131716/subMenu.do" target="_blank">2027 모집 요강</a>
   <a href="https://sites.google.com/view/jeontongyego/" target="_blank">홍보 사이트</a>
@@ -721,4 +727,3 @@ document.addEventListener('DOMContentLoaded', () => {
   
 </body>
 </html>
-
